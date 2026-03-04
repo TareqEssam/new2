@@ -1,6 +1,6 @@
 /**
  * 🧠 neural_guide_engine.js
- * محرك البحث الذكي في الأدلة الرسمية
+ * محرك البحث1 الذكي في الأدلة الرسمية
  * 
  * يعمل مع: processed_guides.js + gpt_agent.js + neural_search_v6.js
  * بدون أي نموذج ذكاء اصطناعي خارجي — 100% Client-Side
@@ -454,15 +454,18 @@ window.selectGuideResult = function(guideId, chunkId, encodedQuery) {
  * فتح الدليل على صفحة محددة
  */
 window.openGuidePage = function(guideId, pageNum) {
-  if (!window.PROCESSED_GUIDES && !window.FULL_GUIDES_DB) return;
-  
-  // البحث عن رابط الدليل في قاعدة البيانات الأصلية
-  const originalGuide = window.FULL_GUIDES_DB?.find(g => g.id === guideId);
-  if (originalGuide?.source_file) {
-    // إذا كان الرابط محلياً
-    const url = `guides/${originalGuide.source_file}#page=${pageNum}`;
-    window.open(url, '_blank');
-  }
+  if (!window.FULL_GUIDES_DB) return;
+
+  const originalGuide = window.FULL_GUIDES_DB.find(g => g.id === guideId);
+  if (!originalGuide) return;
+
+  // تصحيح الامتداد المزدوج .pdf.pdf → .pdf
+  let fileName = originalGuide.source_file || originalGuide.guide_name || '';
+  fileName = fileName.replace(/\.pdf\.pdf$/i, '.pdf');
+
+  // بناء الرابط
+  const url = `guides/${encodeURIComponent(fileName)}#page=${pageNum}`;
+  window.open(url, '_blank');
 };
 
 // =====================================================
